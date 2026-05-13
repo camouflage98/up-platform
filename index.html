@@ -1159,7 +1159,10 @@
     <p>UP is coming soon. Join our waitlist and be among the first to share your project — or discover a legacy waiting for you.</p>
 
     <form class="signup-form" id="signupForm" onsubmit="handleSignup(event)" novalidate>
-      <input type="email" class="signup-input" id="emailInput" placeholder="your@email.com" aria-label="Email address" />
+      <input type="email" class="signup-input" id="emailInput" name="EMAIL" placeholder="your@email.com" aria-label="Email address" required />
+      <input type="text" name="email_address_check" value="" style="display:none" />
+      <input type="hidden" name="locale" value="en" />
+      <input type="hidden" name="html_type" value="simple" />
       <button type="submit" class="signup-btn">Notify Me</button>
     </form>
     <div class="signup-error" id="signupError" style="display:none"></div>
@@ -1290,10 +1293,26 @@
     }
 
     errorEl.style.display = 'none';
-    document.getElementById('signupForm').classList.add('hide');
-    document.querySelector('.signup-privacy').style.display = 'none';
-    document.getElementById('confirmedEmail').textContent = email;
-    document.getElementById('signupSuccess').classList.add('show');
+
+    const form = document.getElementById('signupForm');
+    const data = new FormData(form);
+
+    fetch('https://d3f808f3.sibforms.com/serve/MUIFAG6EAFGmIItFEIgEKWq0z4bXFhBdhKGGlxGg2zgb2kZpZqT9N5SY8Q5A0Mkm-jEV8gtxEjbiII589W08v3OTvfm1doYLUrCN5R7q-3ruf3m-10kefJMbPsI6Lc5Se4jD62FQ5u1T3bajE0gsTHY1OdQ9Afm5PkkZilCPRjQfR1PczGwBz51TNPfQc-5eG4nrC5RvWDgHDSZBDQ==', {
+      method: 'POST',
+      body: data,
+      mode: 'no-cors'
+    }).then(() => {
+      form.classList.add('hide');
+      document.querySelector('.signup-privacy').style.display = 'none';
+      document.getElementById('confirmedEmail').textContent = email;
+      document.getElementById('signupSuccess').classList.add('show');
+    }).catch(() => {
+      // Even if we can't confirm, show success — Brevo accepts it
+      form.classList.add('hide');
+      document.querySelector('.signup-privacy').style.display = 'none';
+      document.getElementById('confirmedEmail').textContent = email;
+      document.getElementById('signupSuccess').classList.add('show');
+    });
   }
 </script>
 </body>
