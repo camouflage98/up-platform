@@ -1,0 +1,4 @@
+node_modules/
+.next/
+up-platform/node_modules/
+up-platform/.next/
