@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — UP Platform</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy-950: #0a1929; --navy-900: #102a43; --navy-800: #243b53;
+      --navy-700: #334e68; --navy-600: #486581; --navy-100: #d9e2ec;
+      --navy-50: #f0f4f8; --gold-500: #f0b429; --gold-400: #f7c948;
+      --gold-600: #de911d; --gold-100: #fff3c4; --warm-50: #fdf8f0;
+      --serif: Georgia, Cambria, "Times New Roman", serif;
+      --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      font-size: 18px;
+      line-height: 1.75;
+      color: var(--navy-900);
+      background: var(--warm-50);
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3 { font-family: var(--serif); line-height: 1.25; }
+    a { text-decoration: none; color: inherit; }
+
+    /* Navbar */
+    nav {
+      background: var(--navy-950);
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo-circle {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--navy-800);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-logo-circle span {
+      font-family: var(--serif); font-weight: 700; font-size: 17px; color: white;
+    }
+    .nav-back {
+      color: rgba(255,255,255,.6);
+      font-size: 15px;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: var(--gold-400); }
+
+    /* Page */
+    .page-hero {
+      background: linear-gradient(135deg, var(--navy-950) 0%, var(--navy-800) 100%);
+      padding: 80px 24px;
+      text-align: center;
+    }
+    .page-hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: white;
+      margin-bottom: 16px;
+    }
+    .page-hero p {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,.6);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .gold { color: var(--gold-400); }
+
+    .content {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+    .content h2 {
+      font-size: 1.7rem;
+      color: var(--navy-900);
+      margin: 48px 0 16px;
+    }
+    .content h2:first-child { margin-top: 0; }
+    .content p {
+      color: var(--navy-600);
+      line-height: 1.85;
+      margin-bottom: 20px;
+    }
+    .content p:last-child { margin-bottom: 0; }
+
+    .contact-box {
+      background: var(--navy-50);
+      border: 1px solid var(--navy-100);
+      border-radius: 20px;
+      padding: 32px;
+      margin-top: 48px;
+    }
+    .contact-box h3 {
+      font-size: 1.2rem;
+      color: var(--navy-900);
+      margin-bottom: 10px;
+    }
+    .contact-box a {
+      color: var(--gold-600);
+      font-weight: 600;
+    }
+    .contact-box a:hover { text-decoration: underline; }
+
+    /* Footer */
+    footer {
+      background: var(--navy-950);
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding: 32px 24px;
+      text-align: center;
+      font-size: .85rem;
+      color: rgba(255,255,255,.25);
+    }
+    footer a { color: rgba(255,255,255,.4); }
+    footer a:hover { color: rgba(255,255,255,.7); }
+    .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 12px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-circle"><span>UP</span></div>
+  </a>
+  <a href="index.html" class="nav-back">← Back to home</a>
+</nav>
+
+<div class="page-hero">
+  <h1>About <span class="gold">UP</span></h1>
+  <p>A platform built on the belief that no meaningful work should be left unfinished.</p>
+</div>
+
+<div class="content">
+
+  <h2>Why UP exists</h2>
+  <p>Every day, people with a lifetime of knowledge, half-finished projects, and hard-won expertise quietly fade from the world — taking their unfinished work with them. A wooden clock left in a workshop. A novel abandoned at chapter twelve. A community garden that never got planted.</p>
+  <p>UP exists to change that. We believe every unfinished project deserves a next chapter, and every young person deserves the chance to contribute to something that genuinely matters.</p>
+
+  <h2>Who it's for</h2>
+  <p><strong>For elders:</strong> If you have a project you started — creative, technical, community, or personal — and you can no longer see it through, UP helps you find someone who will carry it forward with the same care you put in.</p>
+  <p><strong>For contributors:</strong> If you have skills, time, and the desire to do something meaningful, UP connects you with real people and real work — not side projects, but someone's life's work.</p>
+
+  <h2>Where we are now</h2>
+  <p>UP is currently in development. We are building the platform and collecting early projects through a simple form. If you have a project to share — or want to be notified when we launch — we'd love to hear from you.</p>
+  <p>We are a small team building something we believe in. We are not backed by venture capital. We are not chasing growth metrics. We are trying to build something honest and lasting.</p>
+
+  <h2>Get in touch</h2>
+  <p>We read every message personally.</p>
+
+  <div class="contact-box">
+    <h3>Say hello</h3>
+    <p>Email us at <a href="mailto:hello@up-platform.org">hello@up-platform.org</a><br>
+    We're a small team and we read every message.</p>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="mailto:hello@up-platform.org">Contact</a>
+  </div>
+  &copy; 2026 UP Platform. Made with care for the stories that deserve to live on.
+</footer>
+
+</body>
+</html>
