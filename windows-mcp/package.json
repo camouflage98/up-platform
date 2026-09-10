@@ -1,0 +1,28 @@
+{
+  "name": "windows-mcp",
+  "version": "0.1.0",
+  "description": "MCP server that gives an AI assistant controlled access to a Windows machine: PowerShell and cmd, persistent terminals, launching apps, downloading files, and package installs.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "windows-mcp": "src/index.js"
+  },
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "config.example.json",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node src/index.js",
+    "doctor": "node src/index.js --doctor",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^3.25.76"
+  }
+}

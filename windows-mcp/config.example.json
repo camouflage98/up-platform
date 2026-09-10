@@ -1,0 +1,37 @@
+{
+  "allowedRoots": ["%USERPROFILE%", "%TEMP%"],
+  "deniedPathPatterns": [
+    "\\\\Windows\\\\System32\\\\config\\\\",
+    "\\\\System Volume Information\\\\",
+    "\\.ssh\\\\id_"
+  ],
+  "writeEnabled": true,
+
+  "downloadDir": "%USERPROFILE%\\Downloads",
+  "allowedDownloadHosts": [],
+  "allowInsecureDownloads": false,
+  "maxDownloadBytes": 2147483648,
+
+  "defaultTimeoutMs": 60000,
+  "maxTimeoutMs": 600000,
+  "maxOutputBytes": 200000,
+  "maxTerminals": 8,
+  "terminalIdleTimeoutMs": 1800000,
+
+  "powershellPath": null,
+  "preferPwsh": true,
+
+  "packageManagers": ["winget", "choco", "scoop"],
+
+  "features": {
+    "shell": true,
+    "terminals": true,
+    "apps": true,
+    "files": true,
+    "downloads": true,
+    "packages": true,
+    "system": true
+  },
+
+  "auditLogPath": "%LOCALAPPDATA%\\windows-mcp\\audit.jsonl"
+}
