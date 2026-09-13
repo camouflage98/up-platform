@@ -1,6 +1,0 @@
-node_modules/
-
-# Your own footage and renders stay out of git — only the demo assets ship.
-media/*
-!media/demo-*.jpg
-exports/
