@@ -8,6 +8,7 @@ import { registerAppTools } from './tools/apps.js';
 import { registerFileTools } from './tools/files.js';
 import { registerDownloadTools } from './tools/downloads.js';
 import { registerSystemTools } from './tools/system.js';
+import { registerAdminTools } from './tools/admin.js';
 
 const INSTRUCTIONS = `This server drives a real Windows machine that belongs to the user.
 
@@ -25,6 +26,9 @@ How to work with it:
   exact command or package first, get an answer, then repeat the call with confirm: true.
 - A refusal names the policy that caused it. server_policy shows the whole policy, including
   which folders are reachable and which commands are blocked outright.
+- Administrator rights are not automatic. admin_status says what is possible on this machine;
+  admin_run runs a single command as administrator. If the server was not started elevated, that
+  raises a UAC prompt only the person at the keyboard can accept, and the call waits for them.
 - Installing software and elevated launches may still raise a UAC prompt that only the person
   at the keyboard can accept.`;
 
@@ -44,6 +48,7 @@ async function main() {
   registerFileTools(server, ctx);
   registerDownloadTools(server, ctx);
   registerSystemTools(server, ctx);
+  registerAdminTools(server, ctx);
 
   if (args.includes('--doctor')) {
     await doctor(config, ctx);

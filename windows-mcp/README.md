@@ -82,6 +82,8 @@ Or commit a `.mcp.json` in your project with the same `command` and `args` shape
 | `system_info` | Windows build, CPU, memory, uptime, free disk |
 | `clipboard_read` / `clipboard_write` | Read and set the clipboard |
 | `screenshot` | Capture the screen and return the image |
+| `admin_status` | Report whether administrator rights are available, and how UAC is set |
+| `admin_run` | Run one command as administrator |
 | `server_policy` | Report exactly what this server is allowed to do |
 
 ### One-shot commands versus terminals
@@ -129,6 +131,70 @@ determined command can still do real damage. Treat it like handing someone your 
 for a machine you own, not for a shared or production box. Elevated launches and most installers
 still raise a UAC prompt that only the person at the keyboard can accept.
 
+## Administrator access
+
+Some things genuinely need administrator rights: a machine-wide install, a service, most registry
+writes under `HKLM`, a driver. Windows does not let a program grant itself those rights, and
+nothing in this server tries to. `admin_status` reports what is actually possible on the machine:
+whether the server is already elevated, whether the signed-in account could elevate at all, and
+whether UAC will prompt.
+
+There are three ways to give the assistant admin, in increasing order of how much you hand over.
+
+### 1. Per-command elevation, with you accepting the prompt (recommended)
+
+Leave the server unelevated and use `admin_run`. Each call raises a UAC prompt that you accept in
+person, the command runs elevated, and its combined output and exit code come back:
+
+```
+admin_run  { "command": "Install-WindowsFeature -Name Telnet-Client", "confirm": true }
+```
+
+Nothing runs admin unless you click Yes on that specific action, so a mistake costs one prompt.
+The cost is that you have to be at the keyboard, and the call blocks while it waits for you.
+Output arrives as one combined stream rather than separate stdout and stderr, because Windows will
+not let an elevated child write back into an unelevated parent's pipes.
+
+For installs, `package_install` takes `elevated: true` for the same flow, and `scope: "user"` for
+the opposite one: many winget packages install per-user with no admin at all. Try user scope first.
+
+### 2. Start the whole server elevated
+
+Launch your MCP client, or the server, from an administrator terminal. Child processes inherit the
+elevated token, so every tool call runs as admin with no prompts and nothing blocks waiting for
+you. `admin_status` will say `serverProcessElevated: true`.
+
+Understand what this changes. UAC is the thing that was making a mistake cost one click, and this
+removes it for every call, not just the ones you were thinking of. The blocked-command list and
+the path roots become the only thing between a badly worded request and your system folders, and
+they are pattern matching, not a sandbox. If you do this, tighten the config: narrow
+`allowedRoots`, and consider `"features": { "packages": false }`.
+
+Worth doing for a machine you are rebuilding or a VM you can throw away. Not worth doing on your
+daily driver.
+
+### 3. A pre-registered elevated task
+
+An administrator can register a scheduled task once with "Run with highest privileges", and a
+non-elevated caller can then start it without a prompt. That gives unattended admin for one fixed
+job, which is the legitimate use: a specific maintenance script you already trust.
+
+Do not use it as a general escape hatch. A task that takes a command as an argument is a standing
+UAC bypass for anything on the machine that can start a task, including malware that has nothing
+to do with this server. If you register one, hard-code the exact command and accept no arguments.
+There is no tool in this server for this on purpose.
+
+### What not to do
+
+Setting UAC to "Never notify", or `ConsentPromptBehaviorAdmin` to 0, makes every elevation on the
+machine silent, for every program, forever. `admin_status` reports it as a weak configuration. The
+same goes for `runas /savecred`, which stores admin credentials for any process running as you.
+
+Even with admin, two things stay out of reach. The server cannot accept a UAC prompt on your
+behalf: that prompt lives on the secure desktop, where no automation can click. And an installer
+that insists on its own interactive wizard needs a person, or a silent-install flag that the
+vendor supports.
+
 ## Configuration
 
 The server reads the first of these that exists:
@@ -155,7 +221,7 @@ leading `~`. A malformed config is a startup error, not a silent fallback to def
 | `maxTerminals` / `terminalIdleTimeoutMs` | Terminal limits |
 | `powershellPath` / `preferPwsh` | Which PowerShell to drive. Defaults to pwsh 7, then Windows PowerShell |
 | `packageManagers` | Which of winget, choco, scoop are permitted |
-| `features` | Turn off whole groups: `shell`, `terminals`, `apps`, `files`, `downloads`, `packages`, `system` |
+| `features` | Turn off whole groups: `shell`, `terminals`, `apps`, `files`, `downloads`, `packages`, `system`, `admin` |
 | `blockedCommandPatterns` | Refused outright |
 | `confirmCommandPatterns` | Allowed only with `confirm: true` |
 | `auditLogPath` | `null` disables the log |
@@ -198,3 +264,10 @@ capture.
 
 **Nothing happens after an install.** Some installers raise UAC. Check the machine for a prompt
 waiting to be accepted.
+
+**`admin_run` came back saying the prompt was declined.** The UAC dialog was dismissed, or it
+timed out behind another window. Nothing ran. Check the machine and call again.
+
+**An elevated command timed out.** The elevated process may still be running, and an unelevated
+server cannot stop it. Look at the machine before retrying, or the second attempt will collide
+with the first.

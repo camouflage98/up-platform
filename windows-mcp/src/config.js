@@ -98,7 +98,8 @@ export const DEFAULT_CONFIG = {
     files: true,
     downloads: true,
     packages: true,
-    system: true
+    system: true,
+    admin: true
   },
 
   auditLogPath: '%LOCALAPPDATA%\\windows-mcp\\audit.jsonl'

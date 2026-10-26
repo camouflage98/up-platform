@@ -6,6 +6,7 @@ import { pipeline } from 'node:stream/promises';
 import { z } from 'zod';
 import { assertFeature, assertWindows, clampTimeout, resolvePath, ToolError } from '../guard.js';
 import { runPowerShell } from '../exec.js';
+import { runElevated } from '../elevate.js';
 import { defineTool, formatRun, textResult } from './helpers.js';
 
 const PACKAGE_ID = /^[A-Za-z0-9][A-Za-z0-9._+@:\\/-]{0,127}$/;
@@ -195,12 +196,14 @@ export function registerDownloadTools(server, ctx) {
       inputSchema: {
         id: z.string().describe('Exact package id, e.g. "Microsoft.VisualStudioCode".'),
         manager: z.enum(['winget', 'choco', 'scoop']).optional(),
+        elevated: z.boolean().optional().describe('Install as administrator, for a machine-wide install. Raises a UAC prompt unless the server is already elevated.'),
+        scope: z.enum(['user', 'machine']).optional().describe('winget only. User scope usually installs without administrator rights.'),
         confirm: z.boolean().optional(),
         timeoutMs: z.number().int().optional()
       },
       annotations: { destructiveHint: true, openWorldHint: true }
     },
-    async ({ id, manager: name = 'winget', confirm, timeoutMs }) => {
+    async ({ id, manager: name = 'winget', elevated, scope, confirm, timeoutMs }) => {
       assertWindows();
       assertFeature(config, 'packages');
       const chosen = manager(config, name);
@@ -210,7 +213,14 @@ export function registerDownloadTools(server, ctx) {
           code: 'confirmation_required'
         });
       }
-      const result = await runPowerShell(config, chosen.install(id), { timeoutMs: clampTimeout(config, timeoutMs ?? 600_000) });
+      if (scope && name !== 'winget') throw new ToolError('scope only applies to winget.');
+      const command = scope ? `${chosen.install(id)} --scope ${scope}` : chosen.install(id);
+      const timeout = clampTimeout(config, timeoutMs ?? 600_000);
+      if (elevated) {
+        assertFeature(config, 'admin');
+        return textResult(await runElevated(config, command, { timeoutMs: timeout }));
+      }
+      const result = await runPowerShell(config, command, { timeoutMs: timeout });
       return textResult(formatRun(result, { maxBytes: config.maxOutputBytes, label: 'install' }));
     }
   );
